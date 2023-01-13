@@ -27,15 +27,15 @@ namespace PierresTreats
                 .AddEntityFrameworkStores<PierresTreatsContext>()
                 .AddDefaultTokenProviders();
 
-      // builder.Services.Configure<IdentityOptions>(options =>
-      // {
-      //   options.Password.RequireDigit = false;
-      //   options.Password.RequireLowercase = false;
-      //   options.Password.RequireNonAlphanumeric = false;
-      //   options.Password.RequireUppercase = false;
-      //   options.Password.RequiredLength = 0;
-      //   options.Password.RequiredUniqueChars = 0;
-      // });
+      builder.Services.Configure<IdentityOptions>(options =>
+      {
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 1;
+        options.Password.RequiredUniqueChars = 1;
+      });
 
       WebApplication app = builder.Build();
 

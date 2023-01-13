@@ -1,0 +1,23 @@
+@{
+  Layout = "_Layout";
+}
+
+<h2>Why don't you just LOG on IN...??</h2>
+
+<p>To take a peak at Pierre's delicious and flavorful treats</p>
+
+@using PierresTreats.ViewModels
+@model PierresTreats.ViewModels.LoginViewModel
+
+@using (Html.BeginForm())
+{
+  @Html.LabelFor(m => m.Email)
+  @Html.TextBoxFor(m => m.Email)
+
+  @Html.LabelFor(m => m.Password)
+  @Html.EditorFor(m => m.Password)
+
+  <input type="submit" value="Log In">
+}
+
+@Html.ActionLink("Register a new user", "Register");
