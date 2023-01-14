@@ -19,9 +19,24 @@ public class HomeController : Controller
     _db = db;
   }
 
-  public ActionResult Index() 
-  {
-    return View();
-  }
+  [HttpGet("/")]
+      public async Task<ActionResult> Index()
+      {
+        List<object[]> model = new List<object[]>();
+        string userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
+        if (currentUser != null)
+        {
+          Flavor[] flavors = _db.Flavors
+                      .Where(entry => entry.User.Id == currentUser.Id)
+                      .ToArray();
+          model.Add(flavors);
 
+          Treat[] treats = _db.Treats
+                      .Where(entry => entry.User.Id == currentUser.Id)
+                      .ToArray();
+          model.Add(treats);
+        }
+        return View(model);
+      }      
 }

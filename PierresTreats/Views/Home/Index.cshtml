@@ -2,7 +2,34 @@
   Layout = "_Layout";
 }
 
-<h2>Welcome To Pierres Treats</h2>
-<p>@Html.ActionLink("Create or manage an account", "Index", "Account")</p>
+@using PierresTreats.Models
 
-<p>@Html.ActionLink("Log In", "Login", "Account")</p>
+<h2>Welcome To Pierres Treats</h2>
+
+@if (User.Identity.IsAuthenticated) 
+{
+  <p>Logged In As : @User.Identity.Name</p>
+  @if (Model[0].Length == 0)
+  {
+    <p>There aren't any treats</p>
+  }
+
+  @if (Model[1].Length == 0)
+  {
+    <p>There aren't any treats</p>
+  }
+
+  @using (Html.BeginForm("LogOff", "Account"))
+  {
+    <button type="submit">Log Out</button>
+  }
+} 
+
+else 
+{ 
+  <p>@Html.ActionLink("Log In", "Login", "Account") to view your account</p>
+
+  <p>Don't have an account? @Html.ActionLink("Create A New Account", "Register", "Account")</p>
+
+}
+

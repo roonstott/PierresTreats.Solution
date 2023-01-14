@@ -17,12 +17,7 @@ public class AccountController : Controller
     _db = db;
     _userManager = userManager;
     _signInManager = signInManager;  
-  }
-
-  public ActionResult Index ()
-  {
-    return View(); 
-  }
+  }  
    
   public IActionResult Register()
   {
@@ -42,7 +37,7 @@ public class AccountController : Controller
       IdentityResult result = await _userManager.CreateAsync(user, model.Password);
       if (result.Succeeded)
       {
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Home");
       }
       else 
       {
@@ -61,10 +56,32 @@ public class AccountController : Controller
   }
 
   [HttpPost]
+    public async Task<ActionResult> Login(LoginViewModel model)
+    {
+      if (!ModelState.IsValid)
+      {
+        return View(model);
+      }
+      else
+      {
+        Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: true, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+          return RedirectToAction("Index", "Home");
+        }
+        else
+        {
+          ModelState.AddModelError("", "There is something wrong with your email or username. Please try again.");
+          return View(model);
+        }
+      }
+    }
 
-  public ActionResult Login (LoginViewModel model)
-  {
-    return RedirectToAction("Index");
-  }
+    [HttpPost]
+    public async Task<ActionResult> LogOff()
+    {
+      await _signInManager.SignOutAsync();
+      return RedirectToAction("Index", "Home");
+    }
 }
 

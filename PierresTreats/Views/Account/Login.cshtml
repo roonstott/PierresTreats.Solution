@@ -9,6 +9,11 @@
 @using PierresTreats.ViewModels
 @model PierresTreats.ViewModels.LoginViewModel
 
+@if(!ViewData.ModelState.IsValid) 
+{
+  @Html.ValidationSummary("Please fix the following error(s) and then resubmit the form:") 
+}
+
 @using (Html.BeginForm())
 {
   @Html.LabelFor(m => m.Email)
@@ -20,4 +25,6 @@
   <input type="submit" value="Log In">
 }
 
-@Html.ActionLink("Register a new user", "Register");
+<p>Don't have an account? @Html.ActionLink("Create A New Account", "Register")</p>
+
+<p>@Html.ActionLink("Back to home page", "Index", "Home")</p>
