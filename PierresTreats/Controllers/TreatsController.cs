@@ -11,7 +11,6 @@ using System.Security.Claims;
 
 namespace PierresTreats.Controllers
 {
-  [Authorize]
   public class TreatsController : Controller
   {
     private readonly PierresTreatsContext _db;
@@ -22,53 +21,71 @@ namespace PierresTreats.Controllers
       _userManager = userManager;
       _db = db;
     }
+    [AllowAnonymous]
+    public ActionResult ReadOnly(int id)
+    {
+      if (User.Identity.IsAuthenticated)
+      {
+        return RedirectToAction("Details", new {id = id});
+      }
+      else
+      {
+        Treat thisTreat = _db.Treats
+            .Include(t => t.JoinEntities)
+            .ThenInclude(j => j.Flavor)
+            .FirstOrDefault(t => t.TreatId == id);
+        List<string> names = new List<string>();
+        foreach (FlavorTreat join in _db.FlavorTreats)
+        {
+          if (join.TreatId == thisTreat.TreatId)
+          {
+            names.Add(join.Flavor.Name);
+          }
+        }
+        ViewBag.Names = names;
+        return View (thisTreat);
+      }
+    }
 
+    [Authorize]
     public ActionResult Create()
     {
       return View();
     }
-
+    [Authorize]
     [HttpPost]
-    public async Task<ActionResult> Create(Treat treat)
+    public ActionResult Create(Treat treat)
     {
       if (!ModelState.IsValid)
       {
         return View(treat);
       }
       else
-      {
-        string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
-        treat.User = currentUser;
+      {        
         _db.Treats.Add(treat);
         _db.SaveChanges();
         return RedirectToAction("Index", "Home");
       }
     }
-    public async Task<ActionResult> Details (int id)
+    [Authorize]
+    public ActionResult Details (int id)
     {      
       Treat thisTreat = _db.Treats
             .Include(tr => tr.JoinEntities)
-            .FirstOrDefault(tr => tr.TreatId == id);
-
-      string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-      ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
+            .FirstOrDefault(tr => tr.TreatId == id);      
       List<Flavor> select = new List<Flavor>();
       foreach (Flavor flavor in _db.Flavors)
-      {
-        if (flavor.User == currentUser)
-        {        
-          select.Add(flavor);
-        }
+      {          
+        select.Add(flavor);        
       }
       foreach (FlavorTreat join in thisTreat.JoinEntities)
       {
         select.Remove(join.Flavor);
       }      
-      ViewBag.FlavorId = new SelectList(select, "FlavorId", "Name");
+      ViewBag.FlavorId = new SelectList(select, "FlavorId", "Name");      
       return View(thisTreat);
     }
-
+    [Authorize]
     [HttpPost, ActionName("Details")]
     public ActionResult AddJoin( int flavorId, Treat treat)
     {

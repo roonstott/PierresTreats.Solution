@@ -13,7 +13,15 @@
 {
   <p>There aren't any flavors assigned to this treat yet</p>
 }
-else 
+@if (!User.Identity.IsAuthenticated && Model.JoinEntities.Count > 0)
+  {
+    @foreach (FlavorTreat join in ViewBag.Joins)
+    {
+      <p>@join.Flavor.Name</p>
+    }
+  }
+  
+@if (User.Identity.IsAuthenticated && Model.JoinEntities.Count > 0)
 {
   @foreach(FlavorTreat join in Model.JoinEntities)
   {
@@ -21,28 +29,36 @@ else
       <div class="col-8">
         <p>@join.Flavor.Name</p>
       </div>
-      <div class="col-4">
+      <div class="col-4">        
         @using(Html.BeginForm("DeleteJoin", "Treats"))
         {
           @Html.Hidden("joinId", join.FlavorTreatId)
           @Html.Hidden("trId", Model.TreatId)            
           <input type="submit" value="X">
-        }
+        }        
       </div>
     </div>    
   }
 }
 
-<br>
-<h4>Add a new flavor to @Model.Name</h4>
-@using (Html.BeginForm())
+@if (User.Identity.IsAuthenticated)
 {
-  @Html.HiddenFor(model => model.TreatId)
-  @Html.Label("Choose a flavor to add")
-  @Html.DropDownList("FlavorId")
-  <button type="submit" class="btn btn-secondary">Add Flavor</button>
+  <br>
+  <h4>Add a new flavor to @Model.Name</h4>
+  @using (Html.BeginForm())
+  {
+    @Html.HiddenFor(model => model.TreatId)
+    @Html.Label("Choose a flavor to add")
+    @Html.DropDownList("FlavorId")
+    <button type="submit" class="btn btn-secondary">Add Flavor</button>
+  }
 }
-
-<br>
 <br>
 <p>Go back to the @Html.ActionLink("Home Page", "Index", "Home")</p>
+
+@if (!User.Identity.IsAuthenticated)
+{
+  <p>@Html.ActionLink("Log In", "Login", "Account") to your account to make changes</p>
+
+  <p>Don't have an account? @Html.ActionLink("Create A New Account", "Register", "Account")</p>
+}

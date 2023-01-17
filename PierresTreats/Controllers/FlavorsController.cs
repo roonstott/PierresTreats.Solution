@@ -11,7 +11,6 @@ using System.Security.Claims;
 
 namespace PierresTreats.Controllers
 {
-  [Authorize]
   public class FlavorsController : Controller
   {
     private readonly PierresTreatsContext _db;
@@ -23,11 +22,40 @@ namespace PierresTreats.Controllers
       _db = db;
     }
 
+    [AllowAnonymous]
+    public ActionResult ReadOnly(int id)
+    {
+      if (User.Identity.IsAuthenticated)
+      {
+        return RedirectToAction("Details", new {id = id});
+      }
+      else
+      {
+        Flavor thisFlavor = _db.Flavors
+            .Include(f => f.JoinEntities)
+            .ThenInclude(j => j.Treat)
+            .FirstOrDefault(f => f.FlavorId == id);
+            
+        List<string> names = new List<string>();
+        foreach (FlavorTreat join in _db.FlavorTreats)
+        {
+          if (join.FlavorId == thisFlavor.FlavorId)
+          {
+            names.Add(join.Treat.Name);
+          }
+        }
+        ViewBag.Names = names;
+        return View (thisFlavor);
+      }
+    }
+
+    [Authorize]
     public ActionResult Create()
     {
       return View();
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> Create(Flavor flavor)
     {
@@ -46,32 +74,26 @@ namespace PierresTreats.Controllers
       }
     }
 
-    public async Task<ActionResult> Details (int id)
+    [Authorize]
+    public ActionResult Details (int id)
     {      
       Flavor thisFlavor = _db.Flavors
             .Include(flav => flav.JoinEntities)
-            .FirstOrDefault(flav => flav.FlavorId == id);
-
+            .FirstOrDefault(flav => flav.FlavorId == id);        
       List<Treat> select = new List<Treat>();
-      string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-      ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
-
       foreach (Treat treat in _db.Treats)
-      {
-        if (treat.User == currentUser)
-        {
-          select.Add(treat);
-        }
+      {      
+        select.Add(treat);        
       }
       foreach (FlavorTreat join in thisFlavor.JoinEntities)
       {
         select.Remove(join.Treat);
       }
-      
-      ViewBag.TreatId = new SelectList(select, "TreatId", "Name");
+      ViewBag.TreatId = new SelectList(select, "TreatId", "Name");           
       return View(thisFlavor);
     }
 
+    [Authorize]
     [HttpPost, ActionName("Details")]
     public ActionResult AddJoin( int treatId, Flavor flavor)
     {
@@ -87,6 +109,7 @@ namespace PierresTreats.Controllers
       return RedirectToAction("Details", new { id = flavor.FlavorId});
     }  
 
+    [Authorize]
     [HttpPost]
     public ActionResult DeleteJoin (int joinId, int flavId)
     {

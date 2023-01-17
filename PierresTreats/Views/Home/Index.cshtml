@@ -20,7 +20,7 @@
   {
     foreach(Flavor flavor in Model[0])
     {
-      <p>@Html.ActionLink(flavor.Name, "Details", "Flavors", new {id=flavor.FlavorId})</p>
+      <p>@Html.ActionLink(flavor.Name, "ReadOnly", "Flavors", new {id=flavor.FlavorId})</p>
     }
   }
   @if (User.Identity.IsAuthenticated)
@@ -39,7 +39,7 @@ else
 {
   foreach(Treat treat in Model[1])
   {
-    <p>@Html.ActionLink(treat.Name, "Details", "Treats", new {id=treat.TreatId})</p>
+    <p>@Html.ActionLink(treat.Name, "ReadOnly", "Treats", new {id=treat.TreatId})</p>
   }
 }
 @if (User.Identity.IsAuthenticated)
