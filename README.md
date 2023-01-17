@@ -2,7 +2,7 @@
 
 #### By _Robert Onstott_
 
-#### _Web-based business application for tracking the machines that are on-line in a factory, the engineers who work in that factory, and which engineers are authorized to perform maintenance on which machines_
+#### _Web-based retail application for helping the enterprising baker Pierre organize what Treats he has on offer, and the categories of Flavors that they fit into. Through a many-to-many relationship, you can see all treats that fit into a given Flavor category, and you can see all of the Flavors that are associated with a given treat. Anyone can read the site, but only registered users can edit the site to change Pierre's offerings._
 
 ## Technologies Used
 
@@ -16,7 +16,7 @@
 
 ## Description
 
-_This is a C# web app built with the ASP.NET Core MVC web development framework. It utilizes Entity Framework Core for mapping C# object classes into SQL database schemas. For the purposes of development, the database is hosted through a local server using MySql. It is intended for a hypothetical client who runs a factory, with machines and engineers. The client is able to add both engineers and machines to the database, assigning them names upon creating. The client is then able to indicate, through many-to-many relationships, which engineers are trained/authorized to perform maintenance on given machines. The client is able to view individual engineers and see a list of all of the machines that the engineer is able to service, and the client is able to view individual machines and see a list of all of the engineers that are authorized to that machine. The client can also delete machines or engineers and remove client-machine connections. The program stores these values in a SQL database, and the database schema is constructed using code-first development and migrations through EF Core Design package_
+_This is a C# web app built with the ASP.NET Core MVC web development framework. It utilizes Entity Framework Core for mapping C# object classes into SQL database schemas. For the purposes of development, the database is hosted through a local server using MySql. The project uses the Identity Authentication and Authorization feautres provided through the ASP.NET 'Identity' namespace in order to create user accounts with password authentication. Any user can read the offerings on the website, but only logged-in users can make edits to the website. _
 
 ## Setup/Installation Requirements
 
@@ -37,20 +37,20 @@ _This is a C# web app built with the ASP.NET Core MVC web development framework.
   ```
        {
          "ConnectionStrings": {
-           "DefaultConnection": "Server=localhost;Port=3306;database=factory_manager;uid=[***your user ID here ***];pwd=[*** your password here *** ];"
+           "DefaultConnection": "Server=localhost;Port=3306;database=pierres_treats;uid=[***your user ID here ***];pwd=[*** your password here *** ];"
          }
        }      
   ```
   
   
   
-* _Entity Framework Core has tools to automatically build the database schema utiliaing object mapping. To build the database, open a terminal, go to the `Factory` directory: `$ cd Factory` and enter the following commands_
+* _Entity Framework Core has tools to automatically build the database schema utiliaing object mapping. To build the database, open a terminal, go to the `PierresTreats` directory: `$ cd PierresTreats` and enter the following commands_
 
 ```
     $ dotnet ef database update   
 ```
 
-* _While still in the `Factory` directory, enter the command `$ dotnet run`. This will start the local web server. Enter the URL https://localhost:5001 in a browser window. You are now interacting with the web app_
+* _While still in the `PierresTreats` directory, enter the command `$ dotnet run`. This will start the local web server. Enter the URL https://localhost:5001 in a browser window. You are now interacting with the web app_
   
   ```
         $ dotnet run
