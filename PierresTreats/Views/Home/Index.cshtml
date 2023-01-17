@@ -9,7 +9,10 @@
 @if (User.Identity.IsAuthenticated) 
 {
   <p>Logged In As : @User.Identity.Name</p>
-  @if (Model[0].Length == 0)
+}
+
+<h3>Flavors</h3>
+@if (Model[0].Length == 0)
   {
     <p>There aren't any flavors</p>
   }
@@ -20,37 +23,41 @@
       <p>@Html.ActionLink(flavor.Name, "Details", "Flavors", new {id=flavor.FlavorId})</p>
     }
   }
-  <br>
-  @Html.ActionLink("Add a new Flavor", "Create", "Flavors");
-  <br>
+  @if (User.Identity.IsAuthenticated)
+  {
+    <br>
+    @Html.ActionLink("Add a new Flavor", "Create", "Flavors");
+    <br>
+  }
 
-  @if (Model[1].Length == 0)
+<h3>Treats</h3>
+@if (Model[1].Length == 0)
+{
+  <p>There aren't any treats</p>
+}
+else 
+{
+  foreach(Treat treat in Model[1])
   {
-    <p>There aren't any treats</p>
+    <p>@Html.ActionLink(treat.Name, "Details", "Treats", new {id=treat.TreatId})</p>
   }
-  else 
-  {
-    foreach(Treat treat in Model[1])
-    {
-      <p>@Html.ActionLink(treat.Name, "Details", "Treats", new {id=treat.TreatId})</p>
-    }
-  }
+}
+@if (User.Identity.IsAuthenticated)
+{
   <br>
   @Html.ActionLink("Add a new Treat", "Create", "Treats");
   <br>
-
-
   @using (Html.BeginForm("LogOff", "Account"))
   {
     <button type="submit">Log Out</button>
   }
-} 
-
+}
 else 
 { 
-  <p>@Html.ActionLink("Log In", "Login", "Account") to view your account</p>
+  <h3>Account</h3>
+  <br>
+  <p>@Html.ActionLink("Log In", "Login", "Account") to your account to make changes</p>
 
   <p>Don't have an account? @Html.ActionLink("Create A New Account", "Register", "Account")</p>
-
 }
 

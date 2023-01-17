@@ -16,9 +16,21 @@
 }
 else 
 {
-  foreach (FlavorTreat join in Model.JoinEntities)
+  @foreach(FlavorTreat join in Model.JoinEntities)
   {
-    <p>@join.Treat.Name</p>
+    <div class="row" id="list">
+      <div class="col-8">
+        <p>@join.Treat.Name</p>
+      </div>
+      <div class="col-4">
+        @using(Html.BeginForm("DeleteJoin", "Flavors"))
+        {
+          @Html.Hidden("joinId", join.FlavorTreatId)
+          @Html.Hidden("flavId", Model.FlavorId)            
+          <input type="submit" value="X">
+        }
+      </div>
+    </div>    
   }
 }
 

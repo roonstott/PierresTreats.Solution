@@ -2,41 +2,23 @@ using Microsoft.AspNetCore.Mvc;
 using PierresTreats.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
-using System.Security.Claims;
 
 namespace PierresTreats.Controllers;
 
 public class HomeController : Controller 
 {
   private readonly PierresTreatsContext _db;
-  private readonly UserManager<ApplicationUser> _userManager;
-
-  public HomeController(UserManager<ApplicationUser> userManager, PierresTreatsContext db)
+  public HomeController(PierresTreatsContext db)
   {
-    _userManager = userManager;
     _db = db;
   }
 
   [HttpGet("/")]
-      public async Task<ActionResult> Index()
+      public ActionResult Index()
       {
         List<object[]> model = new List<object[]>();
-        string userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
-        if (currentUser != null)
-        {
-          Flavor[] flavors = _db.Flavors
-                      .Where(entry => entry.User.Id == currentUser.Id)
-                      .ToArray();
-          model.Add(flavors);
-
-          Treat[] treats = _db.Treats
-                      .Where(entry => entry.User.Id == currentUser.Id)
-                      .ToArray();
-          model.Add(treats);
-        }
+        model.Add(_db.Flavors.ToArray());
+        model.Add(_db.Treats.ToArray());       
         return View(model);
       }      
 }

@@ -45,16 +45,21 @@ namespace PierresTreats.Controllers
         return RedirectToAction("Index", "Home");
       }
     }
-    public ActionResult Details (int id)
+    public async Task<ActionResult> Details (int id)
     {      
       Treat thisTreat = _db.Treats
             .Include(tr => tr.JoinEntities)
             .FirstOrDefault(tr => tr.TreatId == id);
 
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
       List<Flavor> select = new List<Flavor>();
       foreach (Flavor flavor in _db.Flavors)
       {
-        select.Add(flavor);
+        if (flavor.User == currentUser)
+        {        
+          select.Add(flavor);
+        }
       }
       foreach (FlavorTreat join in thisTreat.JoinEntities)
       {
@@ -77,6 +82,13 @@ namespace PierresTreats.Controllers
         _db.SaveChanges();
       }
       return RedirectToAction("Details", new { id = treat.TreatId});
-    }      
+    }          [HttpPost]
+    public ActionResult DeleteJoin (int joinId, int trId)
+    {
+      FlavorTreat join = _db.FlavorTreats.FirstOrDefault(j => j.FlavorTreatId == joinId);
+      _db.FlavorTreats.Remove(join); 
+      _db.SaveChanges();
+      return RedirectToAction("Details", new {id = trId});
+    }
   }
 }
