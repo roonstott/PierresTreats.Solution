@@ -1,0 +1,29 @@
+@{
+  Layout = "_Layout";
+}
+
+@using PierresTreats.Models
+<h2>@Model.Name</h2>
+<br>
+<p>These are the flavors associated with @Model.Name : </p>
+
+
+@if (Model.JoinEntities.Count == 0)
+{
+  <p>There aren't any flavors assigned to this treat yet</p>
+}
+else 
+{
+  @foreach (string name in ViewBag.Names)
+  {
+    <p>@name</p>
+  }
+}
+
+<br>
+<p>Go back to the @Html.ActionLink("Home Page", "Index", "Home")</p>
+<br>
+<p>@Html.ActionLink("Log In", "Login", "Account") to your account to make changes</p>
+<br>
+<p>Don't have an account? @Html.ActionLink("Create A New Account", "Register", "Account")</p>
+

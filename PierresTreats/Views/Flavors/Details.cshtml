@@ -22,28 +22,36 @@ else
       <div class="col-8">
         <p>@join.Treat.Name</p>
       </div>
-      <div class="col-4">
+      <div class="col-4">            
         @using(Html.BeginForm("DeleteJoin", "Flavors"))
         {
           @Html.Hidden("joinId", join.FlavorTreatId)
           @Html.Hidden("flavId", Model.FlavorId)            
           <input type="submit" value="X">
-        }
+        }        
       </div>
     </div>    
   }
 }
 
-<br>
-<h4>Add a new treat to @Model.Name</h4>
-@using (Html.BeginForm())
+@if (User.Identity.IsAuthenticated)
 {
-  @Html.HiddenFor(model => model.FlavorId)
-  @Html.Label("Choose a treat to add")
-  @Html.DropDownList("TreatId")
-  <button type="submit" class="btn btn-secondary">Add Treat</button>
+  <br>
+  <h4>Add a new treat to @Model.Name</h4>
+  @using (Html.BeginForm())
+  {
+    @Html.HiddenFor(model => model.FlavorId)
+    @Html.Label("Choose a treat to add")
+    @Html.DropDownList("TreatId")
+    <button type="submit" class="btn btn-secondary">Add Treat</button>
+  }
 }
-
-<br>
 <br>
 <p>Go back to the @Html.ActionLink("Home Page", "Index", "Home")</p>
+
+@if (!User.Identity.IsAuthenticated)
+{
+  <p>@Html.ActionLink("Log In", "Login", "Account") to your account to make changes</p>
+
+  <p>Don't have an account? @Html.ActionLink("Create A New Account", "Register", "Account")</p>
+}
