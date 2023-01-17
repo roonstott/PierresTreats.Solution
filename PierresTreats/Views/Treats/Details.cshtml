@@ -1,0 +1,36 @@
+@{
+  Layout = "_Layout";
+}
+
+@using PierresTreats.Models
+@model PierresTreats.Models.Treat
+<h2>@Model.Name</h2>
+<br>
+<p>These are the flavors associated with @Model.Name : </p>
+
+
+@if (Model.JoinEntities.Count == 0)
+{
+  <p>There aren't any flavors assigned to this treat yet</p>
+}
+else 
+{
+  foreach (FlavorTreat join in Model.JoinEntities)
+  {
+    <p>@join.Flavor.Name</p>
+  }
+}
+
+<br>
+<h4>Add a new flavor to @Model.Name</h4>
+@using (Html.BeginForm())
+{
+  @Html.HiddenFor(model => model.TreatId)
+  @Html.Label("Choose a flavor to add")
+  @Html.DropDownList("FlavorId")
+  <button type="submit" class="btn btn-secondary">Add Flavor</button>
+}
+
+<br>
+<br>
+<p>Go back to the @Html.ActionLink("Home Page", "Index", "Home")</p>
