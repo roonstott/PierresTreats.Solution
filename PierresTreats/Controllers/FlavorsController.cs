@@ -11,6 +11,7 @@ using System.Security.Claims;
 
 namespace PierresTreats.Controllers
 {
+  [Authorize]
   public class FlavorsController : Controller
   {
     private readonly PierresTreatsContext _db;
@@ -48,14 +49,11 @@ namespace PierresTreats.Controllers
         return View (thisFlavor);
       }
     }
-
-    [Authorize]
     public ActionResult Create()
     {
       return View();
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<ActionResult> Create(Flavor flavor)
     {
@@ -73,8 +71,6 @@ namespace PierresTreats.Controllers
         return RedirectToAction("Index", "Home");
       }
     }
-
-    [Authorize]
     public ActionResult Details (int id)
     {      
       Flavor thisFlavor = _db.Flavors
@@ -93,7 +89,6 @@ namespace PierresTreats.Controllers
       return View(thisFlavor);
     }
 
-    [Authorize]
     [HttpPost, ActionName("Details")]
     public ActionResult AddJoin( int treatId, Flavor flavor)
     {
@@ -109,7 +104,6 @@ namespace PierresTreats.Controllers
       return RedirectToAction("Details", new { id = flavor.FlavorId});
     }  
 
-    [Authorize]
     [HttpPost]
     public ActionResult DeleteJoin (int joinId, int flavId)
     {
@@ -117,6 +111,15 @@ namespace PierresTreats.Controllers
       _db.FlavorTreats.Remove(join); 
       _db.SaveChanges();
       return RedirectToAction("Details", new {id = flavId});
+    }
+
+    [HttpPost]
+    public ActionResult Delete (int id)
+    {
+      Flavor thisFlavor = _db.Flavors.FirstOrDefault(f => f.FlavorId == id);
+      _db.Flavors.Remove(thisFlavor); 
+      _db.SaveChanges(); 
+      return RedirectToAction("Index", "Home");
     }
   }
 }

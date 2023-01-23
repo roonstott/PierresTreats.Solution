@@ -45,6 +45,13 @@ else
     @Html.DropDownList("TreatId")
     <button type="submit" class="btn btn-secondary">Add Treat</button>
   }
+  <br>
+  @using (Html.BeginForm("Delete", "Flavors"))
+  {
+    @Html.Hidden("id", new {id = Model.FlavorId})
+    <button type="submit" class="btn btn-secondary">Remove This Flavor</button>    
+  }
+
 }
 <br>
 <p>Go back to the @Html.ActionLink("Home Page", "Index", "Home")</p>

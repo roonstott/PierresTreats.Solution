@@ -11,6 +11,7 @@ using System.Security.Claims;
 
 namespace PierresTreats.Controllers
 {
+  [Authorize]
   public class TreatsController : Controller
   {
     private readonly PierresTreatsContext _db;
@@ -21,6 +22,7 @@ namespace PierresTreats.Controllers
       _userManager = userManager;
       _db = db;
     }
+
     [AllowAnonymous]
     public ActionResult ReadOnly(int id)
     {
@@ -46,13 +48,11 @@ namespace PierresTreats.Controllers
         return View (thisTreat);
       }
     }
-
-    [Authorize]
     public ActionResult Create()
     {
       return View();
     }
-    [Authorize]
+
     [HttpPost]
     public ActionResult Create(Treat treat)
     {
@@ -67,7 +67,6 @@ namespace PierresTreats.Controllers
         return RedirectToAction("Index", "Home");
       }
     }
-    [Authorize]
     public ActionResult Details (int id)
     {      
       Treat thisTreat = _db.Treats
@@ -85,7 +84,7 @@ namespace PierresTreats.Controllers
       ViewBag.FlavorId = new SelectList(select, "FlavorId", "Name");      
       return View(thisTreat);
     }
-    [Authorize]
+
     [HttpPost, ActionName("Details")]
     public ActionResult AddJoin( int flavorId, Treat treat)
     {
@@ -99,13 +98,45 @@ namespace PierresTreats.Controllers
         _db.SaveChanges();
       }
       return RedirectToAction("Details", new { id = treat.TreatId});
-    }          [HttpPost]
+    }          
+    
+    [HttpPost]
     public ActionResult DeleteJoin (int joinId, int trId)
     {
       FlavorTreat join = _db.FlavorTreats.FirstOrDefault(j => j.FlavorTreatId == joinId);
       _db.FlavorTreats.Remove(join); 
       _db.SaveChanges();
       return RedirectToAction("Details", new {id = trId});
+    }
+
+    [HttpPost]
+    public ActionResult Delete (int id)
+    {
+      Treat thisTreat = _db.Treats.FirstOrDefault(t => t.TreatId == id);
+      _db.Treats.Remove(thisTreat); 
+      _db.SaveChanges(); 
+      return RedirectToAction("Index", "Home");
+    }
+
+    public ActionResult Edit (int id) 
+    {
+      Treat treat = _db.Treats.FirstOrDefault(t => t.TreatId == id);
+      return View(treat);
+    }
+
+    [HttpPost]
+    public ActionResult Edit (Treat treat) 
+    {
+      if (!ModelState.IsValid)
+      {
+        return View(treat);
+      }
+      else
+      {        
+        _db.Treats.Update(treat);
+        _db.SaveChanges();
+        return RedirectToAction("Index", "Home");
+      }
     }
   }
 }

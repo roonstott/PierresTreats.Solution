@@ -52,6 +52,14 @@
     @Html.DropDownList("FlavorId")
     <button type="submit" class="btn btn-secondary">Add Flavor</button>
   }
+  <br>
+  @Html.ActionLink($"Edit {Model.Name}", "Edit", "Treats", new {id = Model.TreatId})
+  <br>
+  @using (Html.BeginForm("Delete", "Treats"))
+  {
+    @Html.Hidden("id", new {id = Model.TreatId})
+    <button type="submit" class="btn btn-secondary">Remove This Treat</button>    
+  }
 }
 <br>
 <p>Go back to the @Html.ActionLink("Home Page", "Index", "Home")</p>
